@@ -30,4 +30,6 @@ jobs:
       env:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        # For testing, so we can distinguish a scheduled vs manual run
+        TRIGGER_EVENT: ${{ github.event_name }}
       run: python weather_bot.py

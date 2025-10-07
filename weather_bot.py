@@ -4,18 +4,25 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 def send_weather_image():
+    # Set vars
     bot_token = os.environ['TELEGRAM_BOT_TOKEN']
     chat_id = os.environ['TELEGRAM_CHAT_ID']
     image_url = 'https://www.weather.gov/images/gsp/weatherstory.gif'
-    
+    # Get the event that triggered the workflow for testing
+    trigger_event = os.environ.get('TRIGGER_EVENT')
+
     eastern = ZoneInfo('America/New_York')
     now = datetime.now(eastern)
     
-    # Check if it's 7:10 AM Eastern Time (within 30 minute window)
-    if now.hour != 7 or now.minute >= 40:
-        print(f"Current Eastern Time: {now.strftime('%H:%M')} - Not 7:10 AM ET, skipping.")
-        return
-    
+    if trigger_event == 'schedule':
+        # Check if it's 7:10 AM Eastern Time (within 30 minute window)
+        if now.hour != 7 or now.minute >= 40:
+            print(f"Current Eastern Time: {now.strftime('%H:%M')} - Not 7:10 AM ET, skipping.")
+            return
+    else:
+        # Allow manual runs (workflow_dispatch) to proceed immediately for testing
+        print(f"Manual run ({trigger_event}) detected. Bypassing time check and sending image...")
+
     print(f"Current Eastern Time: {now.strftime('%Y-%m-%d %H:%M:%S %Z')} - Sending weather image...")
     
     # Fetch the image
