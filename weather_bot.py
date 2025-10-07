@@ -36,8 +36,7 @@ def send_weather_image():
     
     files = {'photo': ('weatherstory.gif', response.content, 'image/gif')}
     data = {
-        'chat_id': chat_id,
-        'caption': f'Daily Weather Story - {now.strftime("%B %d, %Y")}'
+        'chat_id': chat_id
     }
     
     telegram_response = requests.post(telegram_url, files=files, data=data)
