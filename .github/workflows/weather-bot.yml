@@ -5,7 +5,7 @@ on:
     # Runs at 11:10 AM UTC (7:10 AM EDT) AND 12:10 PM UTC (7:10 AM EST)
     # The Python script will handle the exact time check, effectively making the
     # job only run successfully once per day, regardless of DST.
-    - cron: '10 11,12 * * *'
+    - cron: '10 8-13 * * *'
   workflow_dispatch: # Allows manual trigger for testing
 
 jobs:
