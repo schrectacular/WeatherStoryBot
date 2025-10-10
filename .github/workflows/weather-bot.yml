@@ -2,15 +2,21 @@ name: Daily Weather Bot
 
 on:
   schedule:
-    # Runs at 11:10 AM UTC (7:10 AM EDT) AND 12:10 PM UTC (7:10 AM EST)
-    # The Python script will handle the exact time check, effectively making the
-    # job only run successfully once per day, regardless of DST.
+    # Runs hourly at 10 minutes past the hour, from 8:10 UTC to 13:10 UTC.
+    # This range covers the 4:10 AM to 8:10 AM window in both EST (UTC-5) and EDT (UTC-4).
+    # The Python script contains the final logic to ensure it only runs within
+    # the desired 4 AM - 8 AM Eastern Time window.
     - cron: '10 8-13 * * *'
   workflow_dispatch: # Allows manual trigger for testing
 
 jobs:
   send-weather:
     runs-on: ubuntu-latest
+    # Grant permissions for the GitHub token to request an OIDC token from AWS.
+    # This is more secure than using long-lived access keys.
+    permissions:
+      id-token: write
+      contents: read
     
     steps:
     - name: Checkout repository
@@ -20,6 +26,15 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
+
+    # This action exchanges a GitHub OIDC token for temporary AWS credentials.
+    - name: Configure AWS Credentials using OIDC
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        # The ARN of the IAM role you will create in AWS
+        role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+        # The AWS region where your DynamoDB table is located
+        aws-region: ${{ secrets.AWS_REGION }}
     
     - name: Install dependencies
       run: |
@@ -30,6 +45,6 @@ jobs:
       env:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        # For testing, so we can distinguish a scheduled vs manual run
-        TRIGGER_EVENT: ${{ github.event_name }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        DYNAMODB_TABLE_NAME: ${{ secrets.DYNAMODB_TABLE_NAME }}
       run: python weather_bot.py
