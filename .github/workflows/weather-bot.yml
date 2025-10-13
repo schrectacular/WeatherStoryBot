@@ -2,18 +2,15 @@ name: Daily Weather Bot
 
 on:
   schedule:
-    # Runs hourly at 10 minutes past the hour, from 8:10 UTC to 13:10 UTC.
-    # This range covers the 4:10 AM to 8:10 AM window in both EST (UTC-5) and EDT (UTC-4).
-    # The Python script contains the final logic to ensure it only runs within
-    # the desired 4 AM - 8 AM Eastern Time window.
-    - cron: '10 8-13 * * *'
+    # Runs hourly at 5 minutes past the hour, from 7:10 UTC to 12:10 UTC.
+    # Equates to 3:05 AM to 7:05 AM window EST (UTC-5) and EDT (UTC-4).
+    - cron: '5 7-12 * * *'
   workflow_dispatch: # Allows manual trigger for testing
 
 jobs:
   send-weather:
     runs-on: ubuntu-latest
     # Grant permissions for the GitHub token to request an OIDC token from AWS.
-    # This is more secure than using long-lived access keys.
     permissions:
       id-token: write
       contents: read
@@ -31,9 +28,9 @@ jobs:
     - name: Configure AWS Credentials using OIDC
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        # The ARN of the IAM role you will create in AWS
+        # The ARN of the IAM role in AWS
         role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
-        # The AWS region where your DynamoDB table is located
+        # The AWS region the DynamoDB resides
         aws-region: ${{ secrets.AWS_REGION }}
     
     - name: Install dependencies
