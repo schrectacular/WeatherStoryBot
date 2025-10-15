@@ -67,9 +67,9 @@ def main():
     now_eastern = datetime.now(EASTERN_TZ)
     today_str = now_eastern.strftime('%Y-%m-%d')
     
-    # 1. Time check: Only run after 4 AM Eastern Time.
-    if now_eastern.hour < 4:
-        print(f"Current time is {now_eastern.strftime('%H:%M:%S')} ET. It's before 4 AM. Skipping.")
+    # 1. Time check: Only run after 3 AM Eastern Time.
+    if now_eastern.hour < 3:
+        print(f"Current time is {now_eastern.strftime('%H:%M:%S')} ET. It's before 3 AM. Skipping.")
         return
 
     print(f"Running check at {now_eastern.strftime('%Y-%m-%d %H:%M:%S %Z')}")
