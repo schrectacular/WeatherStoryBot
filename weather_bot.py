@@ -23,7 +23,7 @@ table = dynamodb.Table(DYNAMODB_TABLE_NAME)
 PRIMARY_KEY = {'setting': 'image_status'}
 
 def get_last_run_info():
-    """Fetches the last run date and image hash from DynamoDB."""
+    """Fetches the last run date and image hash from DynamoDB"""
     try:
         response = table.get_item(Key=PRIMARY_KEY)
         item = response.get('Item', {})
@@ -35,7 +35,7 @@ def get_last_run_info():
         return None, None
 
 def update_run_info(run_date, image_hash):
-    """Updates the run date and image hash in DynamoDB."""
+    """Updates the run date and image hash in DynamoDB"""
     try:
         table.update_item(
             Key=PRIMARY_KEY,
@@ -45,12 +45,12 @@ def update_run_info(run_date, image_hash):
                 ':h': image_hash
             }
         )
-        print(f"Successfully updated DynamoDB with date: {run_date} and new hash.")
+        print(f"Successfully updated DynamoDB with date: {run_date} and new hash")
     except ClientError as e:
         print(f"Error updating item in DynamoDB: {e.response['Error']['Message']}")
 
 def send_telegram_photo(image_content):
-    """Sends the provided image content to the Telegram chat."""
+    """Sends the provided image content to the Telegram chat"""
     telegram_url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto'
     files = {'photo': ('weatherstory.gif', image_content, 'image/gif')}
     data = {'chat_id': CHAT_ID}
@@ -63,18 +63,20 @@ def send_telegram_photo(image_content):
         print(f"Failed to send image to Telegram: {e}")
 
 def main():
-    """Main function to check for and send new weather images."""
+    """Main function to check for and send new weather images"""
     now_eastern = datetime.now(EASTERN_TZ)
     today_str = now_eastern.strftime('%Y-%m-%d')
     
-    # Time check: Only run after 3 AM Eastern Time.
+    # Time check: Only run after 3 AM Eastern Time
     if now_eastern.hour < 3:
         print(f"Current time is {now_eastern.strftime('%H:%M:%S')} ET. It's before 3 AM. Skipping.")
         return
 
     print(f"Running check at {now_eastern.strftime('%Y-%m-%d %H:%M:%S %Z')}")
-
-    # Fetch the new image from the weather service.
+    # Fetch previous run info from dynamoDB
+    last_run_date, last_image_hash = get_last_run_info()
+    
+    # Fetch the new image from the weather service
     print(f"Fetching image from {IMAGE_URL}...")
     try:
         response = requests.get(IMAGE_URL, timeout=15)
@@ -87,7 +89,7 @@ def main():
     # Calculate the SHA256 hash of the new image to detect changes.
     current_image_hash = hashlib.sha256(image_content).hexdigest()
     
-    # Compare hashes to see if the image is new.
+    # Compare hashes to see if the image is new
     if current_image_hash == last_image_hash:
         print("Image has not changed since the last check. No update needed.")
     else:
