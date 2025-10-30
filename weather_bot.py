@@ -67,20 +67,14 @@ def main():
     now_eastern = datetime.now(EASTERN_TZ)
     today_str = now_eastern.strftime('%Y-%m-%d')
     
-    # 1. Time check: Only run after 3 AM Eastern Time.
+    # Time check: Only run after 3 AM Eastern Time.
     if now_eastern.hour < 3:
         print(f"Current time is {now_eastern.strftime('%H:%M:%S')} ET. It's before 3 AM. Skipping.")
         return
 
     print(f"Running check at {now_eastern.strftime('%Y-%m-%d %H:%M:%S %Z')}")
 
-    # 2. Check DynamoDB to see if we've already successfully sent an image for today.
-    last_run_date, last_image_hash = get_last_run_info()
-    if last_run_date == today_str:
-        print(f"Already sent the latest image for today ({today_str}). Exiting.")
-        return
-
-    # 3. Fetch the new image from the weather service.
+    # Fetch the new image from the weather service.
     print(f"Fetching image from {IMAGE_URL}...")
     try:
         response = requests.get(IMAGE_URL, timeout=15)
@@ -90,10 +84,10 @@ def main():
         print(f"Failed to fetch image: {e}")
         return
 
-    # 4. Calculate the SHA256 hash of the new image to detect changes.
+    # Calculate the SHA256 hash of the new image to detect changes.
     current_image_hash = hashlib.sha256(image_content).hexdigest()
     
-    # 5. Compare hashes to see if the image is new.
+    # Compare hashes to see if the image is new.
     if current_image_hash == last_image_hash:
         print("Image has not changed since the last check. No update needed.")
     else:
