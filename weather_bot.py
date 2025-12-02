@@ -10,7 +10,9 @@ from botocore.exceptions import ClientError
 # Fetched from environment variables set in the GitHub Actions workflow
 BOT_TOKEN = os.environ['TELEGRAM_BOT_TOKEN']
 CHAT_ID = os.environ['TELEGRAM_CHAT_ID']
-IMAGE_URL = 'https://www.weather.gov/images/gsp/WxStory/WeatherStory1.gif'
+# They keep changing back and forth between this .gif and a .png, need to make this more robust
+# IMAGE_URL = 'https://www.weather.gov/images/gsp/WxStory/WeatherStory1.gif'
+IMAGE_URL = 'https://www.weather.gov/images/gsp/WxStory/WeatherStory1.png'
 AWS_REGION = os.environ['AWS_REGION']
 DYNAMODB_TABLE_NAME = os.environ['DYNAMODB_TABLE_NAME']
 EASTERN_TZ = ZoneInfo('America/New_York')
