@@ -1,3 +1,5 @@
 requests==2.31.0
 tzdata
 boto3
+beautifulsoup4
+lxml
