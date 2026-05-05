@@ -17,16 +17,16 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v4.2.2
     
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
 
     # This action exchanges a GitHub OIDC token for temporary AWS credentials.
     - name: Configure AWS Credentials using OIDC
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@v4.1.0
       with:
         # The ARN of the IAM role in AWS
         role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
